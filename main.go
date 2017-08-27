@@ -27,7 +27,7 @@ func exists(filePath string) (exists bool) {
 }
 
 func main() {
-	fg := flag.String("ft", "node", "Set go-gitignore to produce a javascript gitignore")
+	fg := flag.String("ft", "node", "Set the desired file type to generate a git ignore for")
 	rm := flag.Bool("rm", false, "Empty the gitignore file")
 	flag.Parse()
 	args := flag.Args()
@@ -40,7 +40,6 @@ func main() {
 	bool := exists("./.gitignore")
 	if bool == false {
 
-		log.Println("There is not a file")
 		f, err := os.Create(".gitignore")
 		check(err)
 		writeGitignore(f, fg, args)
@@ -54,21 +53,41 @@ func main() {
 
 }
 
-func writeGitignore(file *os.File, fg *string, args []string) {
+var elmGitIgnore = `
+### Elm template
+# elm-package generated files
+elm-stuff/
+# elm-repl generated files
+repl-temp-*
+### Node template
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed`
+
+func writeGitignore(file *os.File, flag *string, args []string) {
 
 	c := color.New(color.FgGreen).Add(color.Bold)
-	c.Println("> Selected file type is: ->", *fg)
+	c.Println("> Selected file type is: ->", *flag)
 	c.Println("> Files to be added to gitignore: ->", args)
 
-	switch *fg {
+	switch *flag {
 	case "node":
-		_, err := file.WriteString("node_modules\n")
+		git, err := ioutil.ReadFile("./node_gitignore")
+		check(err)
+		s := string(git)
+		_, err := file.WriteString(s)
 		check(err)
 	case "go":
 		_, err := file.WriteString("gin_bin\n")
 		check(err)
 	case "elm":
-		_, err := file.WriteString("elm stuff\n")
+		_, err := file.WriteString(elmGitIgnore + "\n")
 		check(err)
 	}
 
