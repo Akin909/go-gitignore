@@ -18,7 +18,6 @@ func check(err error) {
 
 func exists(filePath string) (exists bool) {
 	exists = true
-
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		exists = false
 		return exists
@@ -79,10 +78,10 @@ func writeGitignore(file *os.File, flag *string, args []string) {
 	// Figure out why!
 	git, err := ioutil.ReadFile("./node_gitignore")
 	check(err)
-	s := string(git)
+	node := string(git)
 	switch *flag {
 	case "node":
-		_, err := file.WriteString(s)
+		_, err := file.WriteString(node + "\n")
 		check(err)
 	case "go":
 		_, err := file.WriteString("gin_bin\n")
