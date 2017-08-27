@@ -75,12 +75,13 @@ func writeGitignore(file *os.File, flag *string, args []string) {
 	c := color.New(color.FgGreen).Add(color.Bold)
 	c.Println("> Selected file type is: ->", *flag)
 	c.Println("> Files to be added to gitignore: ->", args)
-
+	//TODO reads this file in even though it might not be necessary causes error in the case
+	// Figure out why!
+	git, err := ioutil.ReadFile("./node_gitignore")
+	check(err)
+	s := string(git)
 	switch *flag {
 	case "node":
-		git, err := ioutil.ReadFile("./node_gitignore")
-		check(err)
-		s := string(git)
 		_, err := file.WriteString(s)
 		check(err)
 	case "go":
